@@ -1,6 +1,11 @@
 namespace SpriteKind {
     export const background = SpriteKind.create()
 }
+/**
+ * maybe make levels 
+ * 
+ * to clear the memory leak and speed up the balloons
+ */
 function title () {
     titleCompleet = 0
     mySprite = sprites.create(img`
@@ -188,6 +193,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     info.changeLifeBy(-1)
     music.jumpDown.play()
 })
+/**
+ * make intro text with the namen Carme in it
+ */
 let backgroundCloud1: Sprite = null
 let backgroundTree1: Sprite = null
 let hartSprite: Sprite = null
