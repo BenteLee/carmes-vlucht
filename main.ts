@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const background = SpriteKind.create()
 }
 function title () {
+    titleCompleet = 0
     mySprite = sprites.create(img`
 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 9 
@@ -136,44 +137,54 @@ function title () {
     pause(5000)
     effects.confetti.endScreenEffect()
     mySprite.destroy()
+    titleCompleet = 1
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (titleCompleet) {
+        fireSprite = sprites.createProjectileFromSprite(img`
+. . . . . 1 . 5 4 4 2 2 . . 
+. . . 1 . 5 4 4 4 2 2 2 2 . 
+1 . 5 5 5 4 4 4 2 2 2 1 2 . 
+. . . 1 . 5 4 4 4 2 2 2 2 . 
+. . . . . 1 . 5 4 4 2 2 . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . 
+`, playerSprite, 200, 0)
+        music.pewPew.play()
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fire, 100)
     sprite.destroy()
     info.changeScoreBy(1)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    fireSprite = sprites.createProjectileFromSprite(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . 1 . 5 4 4 2 2 . . . 
-. . . . 1 . 5 4 4 4 2 2 2 2 . . 
-. 1 . 5 5 5 4 4 4 2 2 2 1 2 . . 
-. . . . 1 . 5 4 4 4 2 2 2 2 . . 
-. . . . . . 1 . 5 4 4 2 2 . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
+    if (titleCompleet) {
+        fireSprite = sprites.createProjectileFromSprite(img`
+. . . . . 1 . 5 4 4 2 2 . . 
+. . . 1 . 5 4 4 4 2 2 2 2 . 
+1 . 5 5 5 4 4 4 2 2 2 1 2 . 
+. . . 1 . 5 4 4 4 2 2 2 2 . 
+. . . . . 1 . 5 4 4 2 2 . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . 
 `, playerSprite, 200, 0)
+        music.pewPew.play()
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy()
     scene.cameraShake(4, 500)
     info.changeLifeBy(-1)
+    music.jumpDown.play()
 })
 let backgroundCloud1: Sprite = null
 let backgroundClouds: Image[] = []
 let backgroundTree1: Sprite = null
 let EnemySprite: Sprite = null
-let enemySprites: Image[] = []
 let fireSprite: Sprite = null
 let mySprite: Sprite = null
+let titleCompleet = 0
 let playerSprite: Sprite = null
 title()
 playerSprite = sprites.create(img`
@@ -183,19 +194,48 @@ playerSprite = sprites.create(img`
 . 8 8 8 8 6 6 9 . f 4 5 5 f d 8 d . . 
 8 6 6 6 6 6 6 6 6 f 5 5 f d d d d d . 
 8 8 8 8 8 8 8 8 8 8 8 f 6 b d d d . . 
-. f 2 2 2 2 2 2 2 2 2 8 8 f b d f . . 
-f f 4 4 4 4 2 2 4 2 2 2 2 6 f f . . . 
-. . . . . f f f 2 2 2 4 2 2 2 2 2 d d 
-. . . . f 2 2 2 2 2 4 . 4 2 4 2 4 d d 
-. . . f f 4 4 4 4 4 . . . . . . . . . 
+. f 4 4 4 4 4 2 2 2 2 4 8 f b d f . . 
+f f 2 2 2 2 2 2 2 2 2 2 4 6 f f . . . 
+. . . . . f f 4 2 4 2 2 2 4 4 4 4 d d 
+. . . . f 4 4 2 2 2 4 . 2 2 2 2 2 d d 
+. . . f f 2 2 2 2 . . . . . . . . . . 
 `, SpriteKind.Player)
+animation.runImageAnimation(
+playerSprite,
+[img`
+. . . . . . . . . . . f f f f f . . . 
+. . . . . . . . . . f 5 4 4 5 5 f . . 
+. . 8 6 6 9 . . . f 5 4 5 5 d d d . . 
+. 8 8 8 8 6 6 9 . f 4 5 5 f d 8 d . . 
+8 6 6 6 6 6 6 6 6 f 5 5 f d d d d d . 
+8 8 8 8 8 8 8 8 8 8 8 f 6 b d d d . . 
+. f 4 4 4 4 4 2 2 2 2 4 8 f b d f . . 
+f f 2 2 2 2 2 2 2 4 2 2 4 6 f f . . . 
+. . . . . f f 4 2 2 4 2 2 4 4 4 4 d d 
+. . . . f 4 4 2 2 2 4 . 2 2 2 2 2 b b 
+. . . f f 2 2 2 2 . . . . . . . . . . 
+`,img`
+. . . . . . . . . . f f f f f f . . . 
+. . 8 9 . . . . . f 5 5 4 4 5 5 f . . 
+. 8 6 6 6 9 . . . f 4 4 5 5 d d d . . 
+. 8 6 6 6 6 6 9 . f 5 5 5 f d 8 d . . 
+8 8 8 8 6 6 6 6 6 f 5 5 f d d d d d . 
+8 6 6 6 6 6 6 6 8 8 8 f 6 b d d d . . 
+8 6 6 6 6 8 8 8 2 2 2 4 8 f b d f . . 
+8 6 8 8 8 2 2 2 2 4 2 2 4 6 f f . . . 
+8 8 . . . f f 4 2 2 4 2 2 4 4 4 4 d d 
+. . . . f 4 4 2 2 2 4 . 2 2 2 2 2 b b 
+. . . f f 2 2 2 2 . . . . . . . . . . 
+`],
+500,
+true
+)
 playerSprite.setPosition(14, 56)
 playerSprite.setFlag(SpriteFlag.StayInScreen, true)
 info.setLife(3)
 controller.moveSprite(playerSprite, 10, 100)
 scene.setBackgroundColor(9)
-game.onUpdateInterval(2000, function () {
-    enemySprites = [img`
+let enemySprites = [img`
 . . 2 2 2 2 2 2 2 . . 
 . 2 2 2 2 2 2 2 2 2 . 
 2 2 2 2 2 2 2 2 2 2 2 
@@ -253,12 +293,20 @@ a a a a a a a a a a a
 . . . . . f f . . . . 
 . . . . . . f f . . . 
 `]
-    EnemySprite = sprites.create(enemySprites[Math.randomRange(0, 2)], SpriteKind.Enemy)
+game.onUpdateInterval(2000, function () {
+    EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
     EnemySprite.setVelocity(-50 - 0.001 * game.runtime(), 0)
     EnemySprite.setPosition(180, Math.randomRange(9, 110))
-})
-game.onUpdateInterval(2000, function () {
-	
+    if (info.score() > 20) {
+        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
+        EnemySprite.setVelocity(-50, 0)
+        EnemySprite.setPosition(180, Math.randomRange(9, 110))
+    }
+    if (info.score() > 50) {
+        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
+        EnemySprite.setVelocity(-60, 0)
+        EnemySprite.setPosition(180, Math.randomRange(9, 110))
+    }
 })
 game.onUpdateInterval(1500, function () {
     backgroundTree1 = sprites.create(img`
@@ -374,7 +422,7 @@ game.onUpdateInterval(6000, function () {
 . . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 `]
-    backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, 2)], SpriteKind.Projectile)
+    backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
     backgroundCloud1.setVelocity(-26, 0)
     backgroundCloud1.z = -1
     backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
