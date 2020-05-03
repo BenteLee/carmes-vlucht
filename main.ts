@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const background = SpriteKind.create()
+    export const destroySprite = SpriteKind.create()
 }
 /**
  * maybe make levels 
@@ -184,8 +185,11 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         music.pewPew.play()
     }
 })
-sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Projectile, function (sprite, otherSprite) {
-    otherSprite.destroy()
+sprites.onOverlap(SpriteKind.Food, SpriteKind.destroySprite, function (sprite, otherSprite) {
+    sprite.destroy()
+})
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.destroySprite, function (sprite, otherSprite) {
+    sprite.destroy()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy()
@@ -196,16 +200,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 /**
  * make intro text with the namen Carme in it
  */
-let backgroundCloud1: Sprite = null
 let backgroundTree1: Sprite = null
+let backgroundCloud1: Sprite = null
 let hartSprite: Sprite = null
 let spawnCount = 0
 let EnemySprite: Sprite = null
 let fireSprite: Sprite = null
 let mySprite: Sprite = null
-let titleCompleet = 0
 let playerSprite: Sprite = null
+let titleCompleet = 0
 title()
+titleCompleet = 1
 playerSprite = sprites.create(img`
 . . . . . . . . . . . f f f f f . . . 
 . . . . . . . . . . f 5 4 4 5 5 f . . 
@@ -254,6 +259,137 @@ playerSprite.setFlag(SpriteFlag.StayInScreen, true)
 info.setLife(3)
 controller.moveSprite(playerSprite, 10, 100)
 scene.setBackgroundColor(9)
+let destroy = sprites.create(img`
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+f f 
+`, SpriteKind.destroySprite)
+destroy.setPosition(-11, scene.screenHeight() / 2)
 let enemySprites = [img`
 . . 3 3 3 3 3 3 3 . . 
 . 3 3 3 3 3 3 3 3 3 . 
@@ -380,17 +516,11 @@ let HealthCounter = 20
 game.onUpdateInterval(2000, function () {
     EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
     EnemySprite.setVelocity(-50, 0)
-    EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
-    if (EnemySprite.x < 0) {
-        EnemySprite.destroy()
-    }
+    EnemySprite.setPosition(scene.screenWidth() + EnemySprite.width, Math.randomRange(9, 110))
     if (info.score() > 20) {
         EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
         EnemySprite.setVelocity(-70, 0)
         EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
-    }
-    if (EnemySprite.x < 0) {
-        EnemySprite.destroy()
     }
 })
 game.onUpdateInterval(500, function () {
@@ -410,7 +540,14 @@ c 2 2 2 2 2 2 2 2
         spawnCount += 1
     }
 })
-game.onUpdateInterval(500, function () {
+game.onUpdateInterval(6000, function () {
+    backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
+    backgroundCloud1.setVelocity(-26, 0)
+    backgroundCloud1.z = -1
+    backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
+    backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
+})
+game.onUpdateInterval(1000, function () {
     if (Math.randomRange(0, 2) == 0) {
         backgroundTree1 = sprites.create(img`
 . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -459,11 +596,4 @@ game.onUpdateInterval(500, function () {
         backgroundTree1.setPosition(180, Math.randomRange(110, 125))
         backgroundTree1.setFlag(SpriteFlag.Ghost, true)
     }
-})
-game.onUpdateInterval(6000, function () {
-    backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
-    backgroundCloud1.setVelocity(-26, 0)
-    backgroundCloud1.z = -1
-    backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
-    backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
 })
