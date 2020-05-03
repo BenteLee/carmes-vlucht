@@ -153,6 +153,12 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         music.pewPew.play()
     }
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    if (info.life() < 3) {
+        otherSprite.destroy(effects.hearts, 100)
+        info.changeLifeBy(1)
+    }
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fire, 100)
     sprite.destroy()
@@ -179,8 +185,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     music.jumpDown.play()
 })
 let backgroundCloud1: Sprite = null
-let backgroundClouds: Image[] = []
 let backgroundTree1: Sprite = null
+let hartSprite: Sprite = null
 let EnemySprite: Sprite = null
 let fireSprite: Sprite = null
 let mySprite: Sprite = null
@@ -293,72 +299,7 @@ a a a a a a a a a a a
 . . . . . f f . . . . 
 . . . . . . f f . . . 
 `]
-game.onUpdateInterval(2000, function () {
-    EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-    EnemySprite.setVelocity(-50 - 0.001 * game.runtime(), 0)
-    EnemySprite.setPosition(180, Math.randomRange(9, 110))
-    if (info.score() > 20) {
-        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-        EnemySprite.setVelocity(-50, 0)
-        EnemySprite.setPosition(180, Math.randomRange(9, 110))
-    }
-    if (info.score() > 50) {
-        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-        EnemySprite.setVelocity(-60, 0)
-        EnemySprite.setPosition(180, Math.randomRange(9, 110))
-    }
-})
-game.onUpdateInterval(1500, function () {
-    backgroundTree1 = sprites.create(img`
-. . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . 6 6 . . . . . . . . . . . 
-. . . . . . . . . . 6 7 7 6 . . . . . . . . . . 
-. . . . . . . . . . 6 7 7 6 . . . . . . . . . . 
-. . . . . . . . . 8 7 7 7 7 8 . . . . . . . . . 
-. . . . . . . . 8 6 7 7 7 7 6 8 . . . . . . . . 
-. . . . . . . 6 7 7 7 7 7 7 7 7 6 . . . . . . . 
-. . . . . . 6 7 7 6 7 7 7 7 6 7 7 6 . . . . . . 
-. . . . . . 8 6 6 7 7 7 7 7 7 6 6 8 . . . . . . 
-. . . . . 8 6 6 7 7 6 7 7 6 7 7 6 6 8 . . . . . 
-. . . . 8 6 6 8 8 6 6 7 6 6 8 8 8 6 6 8 . . . . 
-. . . . 8 8 8 8 6 6 8 8 8 6 6 8 6 8 8 8 . . . . 
-. . . . . 8 6 8 6 8 8 6 8 8 6 8 6 6 8 . . . . . 
-. . . . 8 6 6 8 8 8 6 6 8 8 8 8 8 6 8 . . . . . 
-. . . . 8 6 8 8 8 8 6 8 8 8 8 8 8 8 8 8 . . . . 
-. . . . 8 8 8 6 6 8 8 8 8 8 8 6 6 8 8 8 . . . . 
-. . . . 8 6 7 6 8 8 8 8 6 8 8 8 6 7 6 8 . . . . 
-. . . 8 7 7 7 8 8 6 8 6 7 8 6 8 8 7 7 6 . . . . 
-. . 8 7 7 7 7 6 7 7 6 7 7 8 7 7 6 7 7 7 8 . . . 
-. 8 7 7 7 6 7 7 7 7 7 7 7 6 7 7 7 7 6 7 7 8 . . 
-. 8 8 6 6 7 7 7 7 7 7 7 7 7 7 7 7 7 7 6 7 7 8 . 
-. 8 6 6 7 7 7 6 7 7 6 7 6 7 7 7 6 7 7 7 6 8 8 . 
-. . 8 8 7 7 6 6 7 6 8 6 6 8 7 7 6 6 6 7 6 6 8 . 
-. . 8 6 8 8 6 6 8 8 8 6 6 8 8 6 8 6 6 8 8 6 6 8 
-. 8 6 6 8 8 6 8 8 6 8 6 8 6 6 8 8 8 6 8 8 8 8 8 
-8 6 6 8 8 6 8 8 6 6 8 8 8 8 6 6 8 8 8 8 6 8 . . 
-8 8 8 8 6 6 8 6 6 8 8 8 8 8 8 6 8 6 8 8 6 6 8 . 
-. 8 6 8 8 8 8 8 8 8 8 8 8 8 8 8 8 6 6 8 8 6 8 . 
-. 8 8 7 8 8 8 8 8 6 8 8 6 8 8 7 8 8 6 8 7 8 8 . 
-. 8 7 7 6 8 7 7 6 7 8 8 7 7 8 7 7 7 6 6 7 7 8 8 
-8 7 7 6 7 7 7 6 7 7 8 7 7 7 6 7 6 7 7 7 6 7 7 8 
-8 8 8 7 7 7 8 7 7 6 6 7 7 7 7 7 7 8 7 7 7 8 8 . 
-. . 8 8 8 8 6 7 8 6 7 7 7 6 6 7 7 6 8 8 8 8 . . 
-. . . . . 8 6 8 8 7 7 8 6 6 6 8 8 6 8 . . . . . 
-. . . . . . 8 8 8 6 8 8 8 6 6 8 8 8 8 . . . . . 
-. . . . . . . . . 8 8 e e 8 8 . . . . . . . . . 
-. . . . . . . . . f e e e e f . . . . . . . . . 
-. . . . . . . . . f e e e e f . . . . . . . . . 
-. . . . . . . . f e e e f e e f . . . . . . . . 
-. . . . . . . . f e f e f f e f . . . . . . . . 
-`, SpriteKind.Projectile)
-    backgroundTree1.setVelocity(-50, 0)
-    backgroundTree1.z = -1
-    backgroundTree1.setPosition(180, Math.randomRange(110, 125))
-    backgroundTree1.setFlag(SpriteFlag.Ghost, true)
-    backgroundTree1.setFlag(SpriteFlag.DestroyOnWall, true)
-})
-game.onUpdateInterval(6000, function () {
-    backgroundClouds = [img`
+let backgroundClouds = [img`
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -422,6 +363,95 @@ game.onUpdateInterval(6000, function () {
 . . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 `]
+let spawnCount = 1
+let HealthCounter = 10
+game.onUpdateInterval(2000, function () {
+    EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
+    EnemySprite.setVelocity(-50, 0)
+    EnemySprite.setPosition(180, Math.randomRange(9, 110))
+    if (info.score() > 20) {
+        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
+        EnemySprite.setVelocity(-60, 0)
+        EnemySprite.setPosition(180, Math.randomRange(9, 110))
+    }
+})
+game.onUpdateInterval(500, function () {
+    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount) {
+        hartSprite = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . 4 4 4 4 . . . . . . 
+. . . . 4 4 4 5 5 4 4 4 . . . . 
+. . . 3 3 3 3 4 4 4 4 4 4 . . . 
+. . 4 3 3 3 3 2 2 2 1 1 4 4 . . 
+. . 3 3 3 3 3 2 2 2 1 1 5 4 . . 
+. 4 3 3 3 3 2 2 2 2 2 5 5 4 4 . 
+. 4 3 3 3 2 2 2 4 4 4 4 5 4 4 . 
+. 4 4 3 3 2 2 4 4 4 4 4 4 4 4 . 
+. 4 2 3 3 2 2 4 4 4 4 4 4 4 4 . 
+. . 4 2 3 3 2 4 4 4 4 4 2 4 . . 
+. . 4 2 2 3 2 2 4 4 4 2 4 4 . . 
+. . . 4 2 2 2 2 2 2 2 2 4 . . . 
+. . . . 4 4 2 2 2 2 4 4 . . . . 
+. . . . . . 4 4 4 4 . . . . . . 
+. . . . . . . . . . . . . . . . 
+`, SpriteKind.Food)
+        hartSprite.setVelocity(-40, 0)
+        hartSprite.setPosition(180, Math.randomRange(9, 110))
+        spawnCount += 1
+    }
+})
+game.onUpdateInterval(500, function () {
+    if (Math.randomRange(0, 2) == 0) {
+        backgroundTree1 = sprites.create(img`
+. . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . 6 6 . . . . . . . . . . . 
+. . . . . . . . . . 6 7 7 6 . . . . . . . . . . 
+. . . . . . . . . . 6 7 7 6 . . . . . . . . . . 
+. . . . . . . . . 8 7 7 7 7 8 . . . . . . . . . 
+. . . . . . . . 8 6 7 7 7 7 6 8 . . . . . . . . 
+. . . . . . . 6 7 7 7 7 7 7 7 7 6 . . . . . . . 
+. . . . . . 6 7 7 6 7 7 7 7 6 7 7 6 . . . . . . 
+. . . . . . 8 6 6 7 7 7 7 7 7 6 6 8 . . . . . . 
+. . . . . 8 6 6 7 7 6 7 7 6 7 7 6 6 8 . . . . . 
+. . . . 8 6 6 8 8 6 6 7 6 6 8 8 8 6 6 8 . . . . 
+. . . . 8 8 8 8 6 6 8 8 8 6 6 8 6 8 8 8 . . . . 
+. . . . . 8 6 8 6 8 8 6 8 8 6 8 6 6 8 . . . . . 
+. . . . 8 6 6 8 8 8 6 6 8 8 8 8 8 6 8 . . . . . 
+. . . . 8 6 8 8 8 8 6 8 8 8 8 8 8 8 8 8 . . . . 
+. . . . 8 8 8 6 6 8 8 8 8 8 8 6 6 8 8 8 . . . . 
+. . . . 8 6 7 6 8 8 8 8 6 8 8 8 6 7 6 8 . . . . 
+. . . 8 7 7 7 8 8 6 8 6 7 8 6 8 8 7 7 6 . . . . 
+. . 8 7 7 7 7 6 7 7 6 7 7 8 7 7 6 7 7 7 8 . . . 
+. 8 7 7 7 6 7 7 7 7 7 7 7 6 7 7 7 7 6 7 7 8 . . 
+. 8 8 6 6 7 7 7 7 7 7 7 7 7 7 7 7 7 7 6 7 7 8 . 
+. 8 6 6 7 7 7 6 7 7 6 7 6 7 7 7 6 7 7 7 6 8 8 . 
+. . 8 8 7 7 6 6 7 6 8 6 6 8 7 7 6 6 6 7 6 6 8 . 
+. . 8 6 8 8 6 6 8 8 8 6 6 8 8 6 8 6 6 8 8 6 6 8 
+. 8 6 6 8 8 6 8 8 6 8 6 8 6 6 8 8 8 6 8 8 8 8 8 
+8 6 6 8 8 6 8 8 6 6 8 8 8 8 6 6 8 8 8 8 6 8 . . 
+8 8 8 8 6 6 8 6 6 8 8 8 8 8 8 6 8 6 8 8 6 6 8 . 
+. 8 6 8 8 8 8 8 8 8 8 8 8 8 8 8 8 6 6 8 8 6 8 . 
+. 8 8 7 8 8 8 8 8 6 8 8 6 8 8 7 8 8 6 8 7 8 8 . 
+. 8 7 7 6 8 7 7 6 7 8 8 7 7 8 7 7 7 6 6 7 7 8 8 
+8 7 7 6 7 7 7 6 7 7 8 7 7 7 6 7 6 7 7 7 6 7 7 8 
+8 8 8 7 7 7 8 7 7 6 6 7 7 7 7 7 7 8 7 7 7 8 8 . 
+. . 8 8 8 8 6 7 8 6 7 7 7 6 6 7 7 6 8 8 8 8 . . 
+. . . . . 8 6 8 8 7 7 8 6 6 6 8 8 6 8 . . . . . 
+. . . . . . 8 8 8 6 8 8 8 6 6 8 8 8 8 . . . . . 
+. . . . . . . . . 8 8 e e 8 8 . . . . . . . . . 
+. . . . . . . . . f e e e e f . . . . . . . . . 
+. . . . . . . . . f e e e e f . . . . . . . . . 
+. . . . . . . . f e e e f e e f . . . . . . . . 
+. . . . . . . . f e f e f f e f . . . . . . . . 
+`, SpriteKind.Projectile)
+        backgroundTree1.setVelocity(-50, 0)
+        backgroundTree1.z = -1
+        backgroundTree1.setPosition(180, Math.randomRange(110, 125))
+        backgroundTree1.setFlag(SpriteFlag.Ghost, true)
+        backgroundTree1.setFlag(SpriteFlag.DestroyOnWall, true)
+    }
+})
+game.onUpdateInterval(6000, function () {
     backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
     backgroundCloud1.setVelocity(-26, 0)
     backgroundCloud1.z = -1
