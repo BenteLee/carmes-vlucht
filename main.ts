@@ -134,6 +134,7 @@ function title () {
 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
 `, SpriteKind.Player)
     effects.confetti.startScreenEffect()
+    music.playMelody("E F - G A - C5 C5 ", 120)
     pause(5000)
     effects.confetti.endScreenEffect()
     mySprite.destroy()
@@ -178,6 +179,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         music.pewPew.play()
     }
 })
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Projectile, function (sprite, otherSprite) {
+    otherSprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     otherSprite.destroy()
     scene.cameraShake(4, 500)
@@ -187,6 +191,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 let backgroundCloud1: Sprite = null
 let backgroundTree1: Sprite = null
 let hartSprite: Sprite = null
+let spawnCount = 0
 let EnemySprite: Sprite = null
 let fireSprite: Sprite = null
 let mySprite: Sprite = null
@@ -217,21 +222,21 @@ playerSprite,
 8 8 8 8 8 8 8 8 8 8 8 f 6 b d d d . . 
 . f 4 4 4 4 4 2 2 2 2 4 8 f b d f . . 
 f f 2 2 2 2 2 2 2 4 2 2 4 6 f f . . . 
-. . . . . f f 4 2 2 4 2 2 4 4 4 4 d d 
-. . . . f 4 4 2 2 2 4 . 2 2 2 2 2 b b 
-. . . f f 2 2 2 2 . . . . . . . . . . 
+. . . . . f f 2 2 2 4 2 2 4 4 4 4 d d 
+. . . . f 4 4 4 2 2 4 . 2 2 2 2 2 b b 
+. . . f f 2 2 2 2 2 . . . . . . . . . 
 `,img`
 . . . . . . . . . . f f f f f f . . . 
 . . 8 9 . . . . . f 5 5 4 4 5 5 f . . 
 . 8 6 6 6 9 . . . f 4 4 5 5 d d d . . 
 . 8 6 6 6 6 6 9 . f 5 5 5 f d 8 d . . 
 8 8 8 8 6 6 6 6 6 f 5 5 f d d d d d . 
-8 6 6 6 6 6 6 6 8 8 8 f 6 b d d d . . 
+8 9 9 9 6 6 6 6 8 8 8 f 6 b d d d . . 
 8 6 6 6 6 8 8 8 2 2 2 4 8 f b d f . . 
 8 6 8 8 8 2 2 2 2 4 2 2 4 6 f f . . . 
-8 8 . . . f f 4 2 2 4 2 2 4 4 4 4 d d 
-. . . . f 4 4 2 2 2 4 . 2 2 2 2 2 b b 
-. . . f f 2 2 2 2 . . . . . . . . . . 
+8 8 . . . f f 2 2 2 4 2 2 4 4 4 4 d d 
+. . . . f 4 4 4 2 2 4 . 2 2 2 2 2 b b 
+. . . f f 2 2 2 2 2 . . . . . . . . . 
 `],
 500,
 true
@@ -242,21 +247,21 @@ info.setLife(3)
 controller.moveSprite(playerSprite, 10, 100)
 scene.setBackgroundColor(9)
 let enemySprites = [img`
-. . 2 2 2 2 2 2 2 . . 
-. 2 2 2 2 2 2 2 2 2 . 
-2 2 2 2 2 2 2 2 2 2 2 
-2 2 3 3 2 2 2 3 3 2 2 
-2 2 2 2 3 3 3 2 2 2 2 
-2 2 2 2 2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 2 2 2 2 
-. 2 2 2 2 2 2 2 2 2 . 
-. . 2 2 2 2 2 2 2 . . 
-. . . 2 2 2 2 2 . . . 
-. . . . 2 2 2 . . . . 
+. . 3 3 3 3 3 3 3 . . 
+. 3 3 3 3 3 3 3 3 3 . 
+3 3 3 3 3 3 3 3 3 3 3 
+3 3 1 3 3 3 3 3 1 3 3 
+3 3 3 1 1 1 1 1 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 
+3 3 3 3 3 3 3 3 3 3 3 
+. 3 3 3 3 3 3 3 3 3 . 
+. . 3 3 3 3 3 3 3 . . 
+. . . 3 3 3 3 3 . . . 
+. . . . 3 3 3 . . . . 
 . . . . . f . . . . . 
-. . . . 2 2 2 . . . . 
+. . . . 3 3 3 . . . . 
 . . . . . f . . . . . 
 . . . . . f f . . . . 
 . . . . . . f f . . . 
@@ -264,8 +269,8 @@ let enemySprites = [img`
 . . a a a a a a a . . 
 . a a a a a a a a a . 
 a a a a a a a a a a a 
-a a b b a a a b b a a 
-a a a a b b b a a a a 
+a a b a a a a a b a a 
+a a a b b b b b a a a 
 a a a a a a a a a a a 
 a a a a a a a a a a a 
 a a a a a a a a a a a 
@@ -283,8 +288,8 @@ a a a a a a a a a a a
 . . 5 5 5 5 5 5 5 . . 
 . 5 5 5 5 5 5 5 5 5 . 
 5 5 5 5 5 5 5 5 5 5 5 
-5 5 1 1 5 5 5 1 1 5 5 
-5 5 5 5 1 1 1 5 5 5 5 
+5 5 1 5 5 5 5 5 1 5 5 
+5 5 5 1 1 1 1 1 5 5 5 
 5 5 5 5 5 5 5 5 5 5 5 
 5 5 5 5 5 5 5 5 5 5 5 
 5 5 5 5 5 5 5 5 5 5 5 
@@ -363,37 +368,34 @@ let backgroundClouds = [img`
 . . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 `]
-let spawnCount = 1
-let HealthCounter = 10
+let HealthCounter = 20
 game.onUpdateInterval(2000, function () {
     EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
     EnemySprite.setVelocity(-50, 0)
-    EnemySprite.setPosition(180, Math.randomRange(9, 110))
+    EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
+    if (EnemySprite.x < 0) {
+        EnemySprite.destroy()
+    }
     if (info.score() > 20) {
         EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-        EnemySprite.setVelocity(-60, 0)
-        EnemySprite.setPosition(180, Math.randomRange(9, 110))
+        EnemySprite.setVelocity(-70, 0)
+        EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
+    }
+    if (EnemySprite.x < 0) {
+        EnemySprite.destroy()
     }
 })
 game.onUpdateInterval(500, function () {
-    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount) {
+    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount - 1) {
         hartSprite = sprites.create(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . 4 4 4 4 . . . . . . 
-. . . . 4 4 4 5 5 4 4 4 . . . . 
-. . . 3 3 3 3 4 4 4 4 4 4 . . . 
-. . 4 3 3 3 3 2 2 2 1 1 4 4 . . 
-. . 3 3 3 3 3 2 2 2 1 1 5 4 . . 
-. 4 3 3 3 3 2 2 2 2 2 5 5 4 4 . 
-. 4 3 3 3 2 2 2 4 4 4 4 5 4 4 . 
-. 4 4 3 3 2 2 4 4 4 4 4 4 4 4 . 
-. 4 2 3 3 2 2 4 4 4 4 4 4 4 4 . 
-. . 4 2 3 3 2 4 4 4 4 4 2 4 . . 
-. . 4 2 2 3 2 2 4 4 4 2 4 4 . . 
-. . . 4 2 2 2 2 2 2 2 2 4 . . . 
-. . . . 4 4 2 2 2 2 4 4 . . . . 
-. . . . . . 4 4 4 4 . . . . . . 
-. . . . . . . . . . . . . . . . 
+. c 2 2 2 . 2 2 . 
+c 2 2 2 2 2 2 4 2 
+c 2 2 2 2 2 4 2 2 
+c 2 2 2 2 2 2 2 2 
+. c 2 2 2 2 2 2 . 
+. c 2 2 2 2 2 2 . 
+. . c 2 2 2 2 . . 
+. . . c 2 2 . . . 
 `, SpriteKind.Food)
         hartSprite.setVelocity(-40, 0)
         hartSprite.setPosition(180, Math.randomRange(9, 110))
@@ -448,7 +450,6 @@ game.onUpdateInterval(500, function () {
         backgroundTree1.z = -1
         backgroundTree1.setPosition(180, Math.randomRange(110, 125))
         backgroundTree1.setFlag(SpriteFlag.Ghost, true)
-        backgroundTree1.setFlag(SpriteFlag.DestroyOnWall, true)
     }
 })
 game.onUpdateInterval(6000, function () {
@@ -457,5 +458,4 @@ game.onUpdateInterval(6000, function () {
     backgroundCloud1.z = -1
     backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
     backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
-    backgroundCloud1.setFlag(SpriteFlag.DestroyOnWall, true)
 })
