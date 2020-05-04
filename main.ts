@@ -3,7 +3,10 @@ namespace SpriteKind {
     export const destroySprite = SpriteKind.create()
 }
 /**
- * maybe make levels 
+ * make intro text with the namen Carme in it
+ */
+/**
+ * maybe make levels
  * 
  * to change difficulty
  */
@@ -143,7 +146,7 @@ function title () {
     music.playMelody("E F - G A - C5 C5 ", 120)
     pause(1000)
     effects.confetti.endScreenEffect()
-    game.showLongText("super girl Carmen komt je redden", DialogLayout.Top)
+    game.showLongText("super girl Carmen maakt korte metten met de gevaarlijke ballonnen van dokter Evel ", DialogLayout.Full)
     mySprite.destroy()
     titleCompleet = 1
 }
@@ -186,6 +189,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         music.pewPew.play()
     }
 })
+sprites.onOverlap(SpriteKind.Food, SpriteKind.destroySprite, function (sprite, otherSprite) {
+    sprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.destroySprite, function (sprite, otherSprite) {
     sprite.destroy()
 })
@@ -195,14 +201,11 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     info.changeLifeBy(-1)
     music.jumpDown.play()
 })
-/**
- * make intro text with the namen Carme in it
- */
 let backgroundCloud1: Sprite = null
-let backgroundTree1: Sprite = null
 let hartSprite: Sprite = null
 let spawnCount = 0
 let HealthCounter = 0
+let backgroundTree1: Sprite = null
 let EnemySprite: Sprite = null
 let fireSprite: Sprite = null
 let mySprite: Sprite = null
@@ -446,6 +449,44 @@ a a a a a a a a a a a
 . . . . . f . . . . . 
 . . . . . f f . . . . 
 . . . . . . f f . . . 
+`, img`
+. . 4 4 4 4 4 4 4 . . 
+. 4 4 4 4 4 4 4 4 4 . 
+4 4 4 4 4 4 4 4 4 4 4 
+4 4 1 4 4 4 4 4 1 4 4 
+4 4 4 1 1 1 1 1 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 
+4 4 4 4 4 4 4 4 4 4 4 
+. 4 4 4 4 4 4 4 4 4 . 
+. . 4 4 4 4 4 4 4 . . 
+. . . 4 4 4 4 4 . . . 
+. . . . 4 4 4 . . . . 
+. . . . . f . . . . . 
+. . . . 4 4 4 . . . . 
+. . . . . f . . . . . 
+. . . . . f f . . . . 
+. . . . . . f f . . . 
+`, img`
+. . 8 8 8 8 8 8 8 . . 
+. 8 8 8 8 8 8 8 8 8 . 
+8 8 8 8 8 8 8 8 8 8 8 
+8 8 1 8 8 8 8 8 1 8 8 
+8 8 8 1 1 1 1 1 8 8 8 
+8 8 8 8 8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 8 8 8 8 
+. 8 8 8 8 8 8 8 8 8 . 
+. . 8 8 8 8 8 8 8 . . 
+. . . 8 8 8 8 8 . . . 
+. . . . 8 8 8 . . . . 
+. . . . . f . . . . . 
+. . . . 8 8 8 . . . . 
+. . . . . f . . . . . 
+. . . . . f f . . . . 
+. . . . . . f f . . . 
 `]
 let backgroundClouds = [img`
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -520,29 +561,6 @@ game.onUpdateInterval(2000, function () {
         EnemySprite.setVelocity(-70, 0)
         EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
     }
-    if (info.score() > 100) {
-        EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-        EnemySprite.setVelocity(-60, 0)
-        EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
-    }
-})
-game.onUpdateInterval(500, function () {
-    HealthCounter = 10
-    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount + 1) {
-        hartSprite = sprites.create(img`
-. c 2 2 2 . 2 2 . 
-c 2 2 2 2 2 2 4 2 
-c 2 2 2 2 2 4 2 2 
-c 2 2 2 2 2 2 2 2 
-. c 2 2 2 2 2 2 . 
-. c 2 2 2 2 2 2 . 
-. . c 2 2 2 2 . . 
-. . . c 2 2 . . . 
-`, SpriteKind.Food)
-        hartSprite.setVelocity(-40, 0)
-        hartSprite.setPosition(180, Math.randomRange(9, 110))
-        spawnCount += 1
-    }
 })
 game.onUpdateInterval(500, function () {
     if (Math.randomRange(0, 2) == 0) {
@@ -592,6 +610,26 @@ game.onUpdateInterval(500, function () {
         backgroundTree1.z = -1
         backgroundTree1.setPosition(180, Math.randomRange(110, 125))
         backgroundTree1.setFlag(SpriteFlag.Ghost, true)
+    }
+})
+game.onUpdateInterval(500, function () {
+    HealthCounter = 20
+    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount + 1) {
+        if (info.life() < 3) {
+            hartSprite = sprites.create(img`
+. c 2 2 2 . 2 2 . 
+c 2 2 2 2 2 2 4 2 
+c 2 2 2 2 2 4 2 2 
+c 2 2 2 2 2 2 2 2 
+. c 2 2 2 2 2 2 . 
+. c 2 2 2 2 2 2 . 
+. . c 2 2 2 2 . . 
+. . . c 2 2 . . . 
+`, SpriteKind.Food)
+            hartSprite.setVelocity(-40, 0)
+            hartSprite.setPosition(180, Math.randomRange(9, 110))
+        }
+        spawnCount += 1
     }
 })
 game.onUpdateInterval(6000, function () {
