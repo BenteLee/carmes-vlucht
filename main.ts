@@ -202,14 +202,17 @@ function levelReset () {
         value.destroy()
     }
     if (levelSet == 1) {
+        info.setLife(3)
         HealthCounter = 10
         balloonSpeed = -50
         game.showLongText("Level 1", DialogLayout.Center)
     } else if (levelSet == 2) {
+        info.setLife(3)
         HealthCounter = 20
         balloonSpeed = -60
         game.showLongText("Level 2", DialogLayout.Center)
     } else if (levelSet == 3) {
+        info.setLife(3)
         HealthCounter = 30
         balloonSpeed = -70
         game.showLongText("Level 3", DialogLayout.Center)
@@ -288,7 +291,6 @@ true
 )
 playerSprite.setPosition(14, 56)
 playerSprite.setFlag(SpriteFlag.StayInScreen, true)
-info.setLife(3)
 controller.moveSprite(playerSprite, 10, 100)
 scene.setBackgroundColor(9)
 let destroy = sprites.create(img`
