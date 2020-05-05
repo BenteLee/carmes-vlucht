@@ -201,24 +201,10 @@ function levelReset () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         value.destroy()
     }
-    if (levelSet == 1) {
-        info.setLife(3)
-        HealthCounter = 10
-        balloonSpeed = -50
-        game.showLongText("Level 1", DialogLayout.Center)
-    } else if (levelSet == 2) {
-        info.setLife(3)
-        HealthCounter = 20
-        balloonSpeed = -60
-        game.showLongText("Level 2", DialogLayout.Center)
-    } else if (levelSet == 3) {
-        info.setLife(3)
-        HealthCounter = 30
-        balloonSpeed = -70
-        game.showLongText("Level 3", DialogLayout.Center)
-    } else {
-    	
-    }
+    HealthCounter = levelSet * 10
+    info.setLife(3)
+    game.showLongText("level " + levelSet, DialogLayout.Center)
+    balloonSpeed = -40 - levelSet * 10
 }
 info.onLifeZero(function () {
     gameOver = 1
@@ -617,13 +603,13 @@ c 2 2 2 2 2 2 2 2
     }
 })
 game.onUpdateInterval(500, function () {
-    if (info.score() >= 100 && levelSet == 1) {
+    if (info.score() >= levelSet * 75 && levelSet == 1) {
         levelReset()
-    } else if (info.score() >= 200 && levelSet == 2) {
+    } else if (info.score() >= levelSet * 75 && levelSet == 2) {
         levelReset()
-    } else if (info.score() >= 300 && levelSet == 3) {
+    } else if (info.score() >= levelSet * 75 && levelSet == 3) {
         levelReset()
-    } else if (info.score() >= 400 && levelSet == 4) {
+    } else if (info.score() >= levelSet * 75 && levelSet == 4) {
         game.showLongText("Super Girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
         game.over(true)
     } else {
