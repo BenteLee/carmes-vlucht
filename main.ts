@@ -142,30 +142,6 @@ function title () {
     mySprite.destroy()
     titleCompleet = 1
 }
-function levelReset () {
-    levelSet += 1
-    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
-        value.destroy()
-    }
-    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
-        value.destroy()
-    }
-    if (levelSet == 1) {
-        HealthCounter = 10
-        balloonSpeed = -50
-        game.showLongText("Level 1", DialogLayout.Center)
-    } else if (levelSet == 2) {
-        HealthCounter = 20
-        balloonSpeed = -60
-        game.showLongText("Level 2", DialogLayout.Center)
-    } else if (levelSet == 3) {
-        HealthCounter = 30
-        balloonSpeed = -70
-        game.showLongText("Level 3", DialogLayout.Center)
-    } else {
-    	
-    }
-}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (titleCompleet) {
         fireSprite = sprites.createProjectileFromSprite(img`
@@ -217,6 +193,30 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     info.changeLifeBy(-1)
     music.jumpDown.play()
 })
+function levelReset () {
+    levelSet += 1
+    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    if (levelSet == 1) {
+        HealthCounter = 10
+        balloonSpeed = -50
+        game.showLongText("Level 1", DialogLayout.Center)
+    } else if (levelSet == 2) {
+        HealthCounter = 20
+        balloonSpeed = -60
+        game.showLongText("Level 2", DialogLayout.Center)
+    } else if (levelSet == 3) {
+        HealthCounter = 30
+        balloonSpeed = -70
+        game.showLongText("Level 3", DialogLayout.Center)
+    } else {
+    	
+    }
+}
 info.onLifeZero(function () {
     gameOver = 1
     for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
@@ -225,18 +225,19 @@ info.onLifeZero(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         value.destroy()
     }
-    game.showLongText("Super Girl Carmen redden het niet om de dag te redden", DialogLayout.Bottom)
+    game.showLongText("Super Girl Carmen redden het niet om de ballonnen te vernietigen", DialogLayout.Bottom)
+    game.over(false)
 })
 let backgroundCloud1: Sprite = null
+let backgroundTree1: Sprite = null
 let hartSprite: Sprite = null
 let spawnCount = 0
-let backgroundTree1: Sprite = null
 let EnemySprite: Sprite = null
 let gameOver = 0
-let fireSprite: Sprite = null
 let balloonSpeed = 0
 let HealthCounter = 0
 let levelSet = 0
+let fireSprite: Sprite = null
 let mySprite: Sprite = null
 let playerSprite: Sprite = null
 let titleCompleet = 0
@@ -595,12 +596,36 @@ game.onUpdateInterval(2000, function () {
     }
 })
 game.onUpdateInterval(500, function () {
-    if (info.score() > 100 && levelSet == 1) {
+    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount + 1) {
+        if (info.life() < 3) {
+            hartSprite = sprites.create(img`
+. c 2 2 2 . 2 2 . 
+c 2 2 2 2 2 2 4 2 
+c 2 2 2 2 2 4 2 2 
+c 2 2 2 2 2 2 2 2 
+. c 2 2 2 2 2 2 . 
+. c 2 2 2 2 2 2 . 
+. . c 2 2 2 2 . . 
+. . . c 2 2 . . . 
+`, SpriteKind.Food)
+            hartSprite.setVelocity(-40, 0)
+            hartSprite.setPosition(180, Math.randomRange(9, 110))
+        }
+        spawnCount += 1
+    }
+})
+game.onUpdateInterval(500, function () {
+    if (info.score() >= 100 && levelSet == 1) {
         levelReset()
-    } else if (info.score() > 200 && levelSet == 2) {
+    } else if (info.score() >= 200 && levelSet == 2) {
         levelReset()
-    } else if (info.score() > 300 && levelSet == 3) {
-        game.showLongText("Super girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
+    } else if (info.score() >= 300 && levelSet == 3) {
+        levelReset()
+    } else if (info.score() >= 400 && levelSet == 4) {
+        game.showLongText("Super Girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
+        game.over(true)
+    } else {
+    	
     }
     if (!(gameOver)) {
         if (Math.randomRange(0, 2) == 0) {
@@ -651,25 +676,6 @@ game.onUpdateInterval(500, function () {
             backgroundTree1.setPosition(180, Math.randomRange(110, 125))
             backgroundTree1.setFlag(SpriteFlag.Ghost, true)
         }
-    }
-})
-game.onUpdateInterval(500, function () {
-    if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount + 1) {
-        if (info.life() < 3) {
-            hartSprite = sprites.create(img`
-. c 2 2 2 . 2 2 . 
-c 2 2 2 2 2 2 4 2 
-c 2 2 2 2 2 4 2 2 
-c 2 2 2 2 2 2 2 2 
-. c 2 2 2 2 2 2 . 
-. c 2 2 2 2 2 2 . 
-. . c 2 2 2 2 . . 
-. . . c 2 2 . . . 
-`, SpriteKind.Food)
-            hartSprite.setVelocity(-40, 0)
-            hartSprite.setPosition(180, Math.randomRange(9, 110))
-        }
-        spawnCount += 1
     }
 })
 game.onUpdateInterval(6000, function () {
