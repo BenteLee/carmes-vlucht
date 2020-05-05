@@ -2,14 +2,6 @@ namespace SpriteKind {
     export const background = SpriteKind.create()
     export const destroySprite = SpriteKind.create()
 }
-/**
- * make intro text with the namen Carme in it
- */
-/**
- * maybe make levels
- * 
- * to change difficulty
- */
 function title () {
     titleCompleet = 0
     mySprite = sprites.create(img`
@@ -150,6 +142,30 @@ function title () {
     mySprite.destroy()
     titleCompleet = 1
 }
+function levelReset () {
+    levelSet += 1
+    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    if (levelSet == 1) {
+        HealthCounter = 10
+        balloonSpeed = -50
+        game.showLongText("Level 1", DialogLayout.Center)
+    } else if (levelSet == 2) {
+        HealthCounter = 20
+        balloonSpeed = -60
+        game.showLongText("Level 2", DialogLayout.Center)
+    } else if (levelSet == 3) {
+        HealthCounter = 30
+        balloonSpeed = -70
+        game.showLongText("Level 3", DialogLayout.Center)
+    } else {
+    	
+    }
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (titleCompleet) {
         fireSprite = sprites.createProjectileFromSprite(img`
@@ -201,13 +217,26 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     info.changeLifeBy(-1)
     music.jumpDown.play()
 })
+info.onLifeZero(function () {
+    gameOver = 1
+    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    game.showLongText("Super Girl Carmen redden het niet om de dag te redden", DialogLayout.Bottom)
+})
 let backgroundCloud1: Sprite = null
 let hartSprite: Sprite = null
 let spawnCount = 0
-let HealthCounter = 0
 let backgroundTree1: Sprite = null
 let EnemySprite: Sprite = null
+let gameOver = 0
 let fireSprite: Sprite = null
+let balloonSpeed = 0
+let HealthCounter = 0
+let levelSet = 0
 let mySprite: Sprite = null
 let playerSprite: Sprite = null
 let titleCompleet = 0
@@ -552,19 +581,30 @@ let backgroundClouds = [img`
 . . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 `]
+levelReset()
 game.onUpdateInterval(2000, function () {
-    EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-    EnemySprite.setVelocity(-50, 0)
-    EnemySprite.setPosition(scene.screenWidth() + EnemySprite.width, Math.randomRange(9, 110))
-    if (info.score() > 50) {
+    if (!(gameOver)) {
         EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
-        EnemySprite.setVelocity(-70, 0)
-        EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
+        EnemySprite.setVelocity(balloonSpeed, 0)
+        EnemySprite.setPosition(scene.screenWidth() + EnemySprite.width, Math.randomRange(9, 110))
+        if (info.score() > 50) {
+            EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
+            EnemySprite.setVelocity(balloonSpeed - 20, 0)
+            EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
+        }
     }
 })
 game.onUpdateInterval(500, function () {
-    if (Math.randomRange(0, 2) == 0) {
-        backgroundTree1 = sprites.create(img`
+    if (info.score() > 100 && levelSet == 1) {
+        levelReset()
+    } else if (info.score() > 200 && levelSet == 2) {
+        levelReset()
+    } else if (info.score() > 300 && levelSet == 3) {
+        game.showLongText("Super girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
+    }
+    if (!(gameOver)) {
+        if (Math.randomRange(0, 2) == 0) {
+            backgroundTree1 = sprites.create(img`
 . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . 6 6 . . . . . . . . . . . 
 . . . . . . . . . . 6 7 7 6 . . . . . . . . . . 
@@ -606,14 +646,14 @@ game.onUpdateInterval(500, function () {
 . . . . . . . . f e e e f e e f . . . . . . . . 
 . . . . . . . . f e f e f f e f . . . . . . . . 
 `, SpriteKind.Projectile)
-        backgroundTree1.setVelocity(-50, 0)
-        backgroundTree1.z = -1
-        backgroundTree1.setPosition(180, Math.randomRange(110, 125))
-        backgroundTree1.setFlag(SpriteFlag.Ghost, true)
+            backgroundTree1.setVelocity(-50, 0)
+            backgroundTree1.z = -1
+            backgroundTree1.setPosition(180, Math.randomRange(110, 125))
+            backgroundTree1.setFlag(SpriteFlag.Ghost, true)
+        }
     }
 })
 game.onUpdateInterval(500, function () {
-    HealthCounter = 20
     if (info.score() % HealthCounter < 1 && info.score() / HealthCounter == spawnCount + 1) {
         if (info.life() < 3) {
             hartSprite = sprites.create(img`
@@ -633,9 +673,11 @@ c 2 2 2 2 2 2 2 2
     }
 })
 game.onUpdateInterval(6000, function () {
-    backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
-    backgroundCloud1.setVelocity(-26, 0)
-    backgroundCloud1.z = -1
-    backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
-    backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
+    if (!(gameOver)) {
+        backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
+        backgroundCloud1.setVelocity(-26, 0)
+        backgroundCloud1.z = -1
+        backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
+        backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
+    }
 })
