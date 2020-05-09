@@ -138,7 +138,7 @@ function title () {
     music.playMelody("E F - G A - C5 C5 ", 120)
     pause(1000)
     effects.confetti.endScreenEffect()
-    game.showLongText("Super Girl Carmen maakt korte metten met de gevaarlijke ballonnen van dokter Evel ", DialogLayout.Full)
+    game.showLongText("Super Girl " + playerNaam + " maakt korte metten met de     gevaarlijke ballonnen    van dokter Evel " + "                                                          " + "schiet alle ballonnen   kapot!", DialogLayout.Full)
     mySprite.destroy()
     titleCompleet = 1
 }
@@ -206,7 +206,7 @@ function levelReset () {
     }
     HealthCounter = levelSet * 10
     info.setLife(3)
-    game.showLongText("level " + levelSet, DialogLayout.Center)
+    game.showLongText("               " + "               " + "               " + "    level " + levelSet, DialogLayout.Center)
     balloonSpeed = -40 - levelSet * 10
 }
 info.onLifeZero(function () {
@@ -217,7 +217,7 @@ info.onLifeZero(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         value.destroy()
     }
-    game.showLongText("Super Girl Carmen redden het niet om de ballonnen te vernietigen", DialogLayout.Bottom)
+    game.showLongText("Super Girl " + playerNaam + " redden het niet om de ballonnen te vernietigen", DialogLayout.Bottom)
     game.over(false)
 })
 let backgroundCloud1: Sprite = null
@@ -233,6 +233,8 @@ let fireSprite: Sprite = null
 let mySprite: Sprite = null
 let playerSprite: Sprite = null
 let titleCompleet = 0
+let playerNaam = ""
+playerNaam = "Carme"
 title()
 titleCompleet = 1
 playerSprite = sprites.create(img`
@@ -593,7 +595,7 @@ game.onUpdateInterval(500, function () {
     } else if (info.score() >= levelSet * levelCompletion && levelSet == 3) {
         levelReset()
     } else if (info.score() >= levelSet * levelCompletion && levelSet == 4) {
-        game.showLongText("Super Girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
+        game.showLongText("Super Girl " + playerNaam + " heeft  alle ballonnen vernietigt en daar mee de dag gered", DialogLayout.Full)
         game.over(true)
     } else {
     	
