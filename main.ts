@@ -138,7 +138,7 @@ function title () {
     music.playMelody("E F - G A - C5 C5 ", 120)
     pause(1000)
     effects.confetti.endScreenEffect()
-    game.showLongText("super girl Carmen maakt korte metten met de gevaarlijke ballonnen van dokter Evel ", DialogLayout.Full)
+    game.showLongText("Super Girl Carmen maakt korte metten met de gevaarlijke ballonnen van dokter Evel ", DialogLayout.Full)
     mySprite.destroy()
     titleCompleet = 1
 }
@@ -155,6 +155,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 `, playerSprite, 200, 0)
         music.pewPew.play()
     }
+})
+sprites.onOverlap(SpriteKind.background, SpriteKind.destroySprite, function (sprite, otherSprite) {
+    sprite.destroy()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     if (info.life() < 3) {
@@ -195,7 +198,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 function levelReset () {
     levelSet += 1
-    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
+    for (let value of sprites.allOfKind(SpriteKind.background)) {
         value.destroy()
     }
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
@@ -409,7 +412,7 @@ f f
 f f 
 f f 
 `, SpriteKind.destroySprite)
-destroy.setPosition(-11, scene.screenHeight() / 2)
+destroy.setPosition(-42, scene.screenHeight() / 2)
 let enemySprites = [img`
 . . 3 3 3 3 3 3 3 . . 
 . 3 3 3 3 3 3 3 3 3 . 
@@ -507,76 +510,56 @@ a a a a a a a a a a a
 . . . . . . f f . . . 
 `]
 let backgroundClouds = [img`
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . . 
-. . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . 
-. . . . 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 d d d 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 d d d d d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 1 1 1 1 1 1 1 1 1 1 . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 . . . . . 
-. . . d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 d . . . . . 
-. . . d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d 1 1 1 1 1 1 1 1 1 1 d d . . . . . . 
-. . . . d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d d d d d 1 1 1 1 1 1 d d d . . . . . . . 
-. . . . . . d d d d d d d d d d d d d d d d d d . . . d d d d d d d d d . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . 
+. . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . 
+. . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . 
+. . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . 
+. . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . 
+. 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 d d d 1 1 1 1 1 1 1 1 1 1 . . . . . . . 
+1 1 1 1 1 1 1 1 1 d d d d d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 1 1 1 1 1 1 1 1 1 1 . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 
+d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 d 
+d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d 1 1 1 1 1 1 1 1 1 1 d d . 
+. d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d d d d d 1 1 1 1 1 1 d d d . . 
+. . . d d d d d d d d d d d d d d d d d d . . . d d d d d d d d d . . . . 
 `, img`
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . 1 1 1 . . . . . . . . . . . . . . 
-. . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . 1 1 1 1 1 1 . . . . . . . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . 
-. . . d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d . . . . . 
-. . . d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . . . . . . 
-. . . . d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . . . . . . . 
-. . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . 1 1 1 . . . . . . . . . 
+. 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . 1 1 1 1 1 1 . . . . . . . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 . 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 
+d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . 
+. d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . . 
+. . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . 
 `, img`
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 1 1 1 1 1 . . . 
-. . . . . . . . 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 . . 
-. . . . . . 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 1 1 . 
-. . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 
-. . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-. . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 
-. . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d . 
-. . . d 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . 
-. . . d d 1 1 1 1 1 1 1 1 1 1 1 d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . . 
-. . . . d d d 1 1 1 1 1 1 1 1 d d d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d d . . . 
-. . . . . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 . . 
+. . . 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 1 1 . 
+. . . 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . . . . . . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 
+. . 1 1 1 1 1 1 1 1 1 1 1 1 1 . . . . . 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+. 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d . 
+d 1 1 1 1 1 1 1 1 1 1 1 1 1 d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . 
+d d 1 1 1 1 1 1 1 1 1 1 1 d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d . . 
+. d d d 1 1 1 1 1 1 1 1 d d d d d d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 d d d d . . . 
+. . . d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d . . . . . . 
 `]
 levelReset()
+let levelCompletion = 75
 game.onUpdateInterval(2000, function () {
     if (!(gameOver)) {
         EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
         EnemySprite.setVelocity(balloonSpeed, 0)
         EnemySprite.setPosition(scene.screenWidth() + EnemySprite.width, Math.randomRange(9, 110))
-        if (info.score() > 50) {
+        if (info.score() > levelCompletion / 2) {
             EnemySprite = sprites.create(enemySprites[Math.randomRange(0, enemySprites.length - 1)], SpriteKind.Enemy)
             EnemySprite.setVelocity(balloonSpeed - 20, 0)
             EnemySprite.setPosition(scene.screenWidth() + 11, Math.randomRange(9, 110))
@@ -603,13 +586,13 @@ c 2 2 2 2 2 2 2 2
     }
 })
 game.onUpdateInterval(500, function () {
-    if (info.score() >= levelSet * 75 && levelSet == 1) {
+    if (info.score() >= levelSet * levelCompletion && levelSet == 1) {
         levelReset()
-    } else if (info.score() >= levelSet * 75 && levelSet == 2) {
+    } else if (info.score() >= levelSet * levelCompletion && levelSet == 2) {
         levelReset()
-    } else if (info.score() >= levelSet * 75 && levelSet == 3) {
+    } else if (info.score() >= levelSet * levelCompletion && levelSet == 3) {
         levelReset()
-    } else if (info.score() >= levelSet * 75 && levelSet == 4) {
+    } else if (info.score() >= levelSet * levelCompletion && levelSet == 4) {
         game.showLongText("Super Girl Carmen heeft alle balloonen vernietigt en daar mee de dag gered", DialogLayout.Full)
         game.over(true)
     } else {
@@ -658,20 +641,18 @@ game.onUpdateInterval(500, function () {
 . . . . . . . . . f e e e e f . . . . . . . . . 
 . . . . . . . . f e e e f e e f . . . . . . . . 
 . . . . . . . . f e f e f f e f . . . . . . . . 
-`, SpriteKind.Projectile)
+`, SpriteKind.background)
             backgroundTree1.setVelocity(-50, 0)
             backgroundTree1.z = -1
             backgroundTree1.setPosition(180, Math.randomRange(110, 125))
-            backgroundTree1.setFlag(SpriteFlag.Ghost, true)
         }
     }
 })
 game.onUpdateInterval(6000, function () {
     if (!(gameOver)) {
-        backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.Projectile)
+        backgroundCloud1 = sprites.create(backgroundClouds[Math.randomRange(0, backgroundClouds.length - 1)], SpriteKind.background)
         backgroundCloud1.setVelocity(-26, 0)
         backgroundCloud1.z = -1
         backgroundCloud1.setPosition(180, Math.randomRange(0, 50))
-        backgroundCloud1.setFlag(SpriteFlag.Ghost, true)
     }
 })
