@@ -211,12 +211,9 @@ function levelReset () {
 }
 info.onLifeZero(function () {
     gameOver = 1
-    for (let value of sprites.allOfKind(SpriteKind.Projectile)) {
-        value.destroy()
-    }
-    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
-        value.destroy()
-    }
+    tilemap.destorySpritesOfKind(SpriteKind.background)
+    tilemap.destorySpritesOfKind(SpriteKind.Enemy)
+    tilemap.destorySpritesOfKind(SpriteKind.Food)
     game.showLongText("Super Girl " + playerNaam + " redden het niet om de ballonnen te vernietigen", DialogLayout.Bottom)
     game.over(false)
 })

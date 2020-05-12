@@ -2,7 +2,8 @@
     "name": "Carme's vlucht",
     "dependencies": {
         "device": "*",
-        "animation": "*"
+        "animation": "*",
+        "tilemaps": "github:microsoft/pxt-tilemaps#v1.7.1"
     },
     "description": "",
     "files": [
