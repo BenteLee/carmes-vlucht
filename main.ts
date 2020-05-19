@@ -135,7 +135,7 @@ function title () {
 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
 `, SpriteKind.Player)
     effects.confetti.startScreenEffect()
-    music.playMelody("E F - G A - C5 C5 ", 120)
+    music.playMelody("E F - G A - C5 C5 ", 140)
     pause(1000)
     effects.confetti.endScreenEffect()
     game.showLongText("Super Girl " + playerNaam + " maakt korte metten met de     gevaarlijke ballonnen    van dokter Evel " + "                                                          " + "schiet alle ballonnen   kapot!", DialogLayout.Full)
@@ -231,7 +231,7 @@ let mySprite: Sprite = null
 let playerSprite: Sprite = null
 let titleCompleet = 0
 let playerNaam = ""
-playerNaam = "Carme"
+playerNaam = "Carmen"
 title()
 titleCompleet = 1
 playerSprite = sprites.create(img`
@@ -267,10 +267,10 @@ f f 2 2 2 2 2 2 2 4 2 2 4 6 f f . . .
 . 8 6 6 6 9 . . . f 4 4 5 5 d d d . . 
 . 8 6 6 6 6 6 9 . f 5 5 5 f d 8 d . . 
 8 8 8 8 6 6 6 6 6 f 5 5 f d d d d d . 
-8 9 9 9 6 6 6 6 8 8 8 f 6 b d d d . . 
-8 6 6 6 6 8 8 8 2 2 2 4 8 f b d f . . 
-8 6 8 8 8 2 2 2 2 4 2 2 4 6 f f . . . 
-8 8 . . . f f 2 2 2 4 2 2 4 4 4 4 d d 
+8 9 9 9 6 6 6 6 6 8 8 f 6 b d d d . . 
+8 6 6 6 6 6 8 8 8 2 2 4 8 f b d f . . 
+8 6 6 8 8 8 2 2 2 4 2 2 4 6 f f . . . 
+8 8 8 . . f f 2 2 2 4 2 2 4 4 4 4 d d 
 . . . . f 4 4 4 2 2 4 . 2 2 2 2 2 b b 
 . . . f f 2 2 2 2 2 . . . . . . . . . 
 `],
